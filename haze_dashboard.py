@@ -122,34 +122,21 @@ if selected_section == "Executive Summary":
 elif selected_section == "Haze Conditions Overview":
     st.markdown('<h2 class="section-header">🌫️ Current Haze Conditions & Trends</h2>', unsafe_allow_html=True)
     
-    # Create sample data for API readings
-    dates = pd.date_range('2024-01-01', '2025-08-05', freq='D')
-    api_values = np.random.normal(80, 30, len(dates))
-    api_values = np.clip(api_values, 0, 500)
+    st.markdown('<h3 class="subsection-header">API Monitoring Standards</h3>', unsafe_allow_html=True)
     
-    # Add some haze spikes
-    haze_periods = [
-        (pd.Timestamp('2024-06-15'), pd.Timestamp('2024-07-15')),
-        (pd.Timestamp('2025-07-20'), pd.Timestamp('2025-08-05'))
-    ]
+    # API threshold information (factual standards)
+    api_info = {
+        'API Range': ['0-50', '51-100', '101-200', '201-300', '301+'],
+        'Status': ['Good', 'Moderate', 'Unhealthy', 'Very Unhealthy', 'Hazardous'],
+        'Health Impact': ['Minimal', 'Acceptable', 'Sensitive groups affected', 'Everyone affected', 'Emergency conditions']
+    }
     
-    for start, end in haze_periods:
-        mask = (dates >= start) & (dates <= end)
-        api_values[mask] += np.random.normal(100, 20, mask.sum())
+    df_api_info = pd.DataFrame(api_info)
+    st.table(df_api_info)
     
-    df_api = pd.DataFrame({'Date': dates, 'API': api_values})
-    
-    st.markdown('<h3 class="subsection-header">Air Pollution Index Trends</h3>', unsafe_allow_html=True)
-    
-    fig_api = px.line(df_api, x='Date', y='API', 
-                      title='Malaysia Air Pollution Index (API) Trends 2024-2025')
-    fig_api.add_hline(y=100, line_dash="dash", line_color="orange", 
-                      annotation_text="Unhealthy Threshold")
-    fig_api.add_hline(y=200, line_dash="dash", line_color="red", 
-                      annotation_text="Very Unhealthy Threshold")
-    fig_api.add_hline(y=300, line_dash="dash", line_color="purple", 
-                      annotation_text="Hazardous Threshold")
-    st.plotly_chart(fig_api, use_container_width=True)
+    st.markdown("""
+    **Source:** Malaysian Department of Environment API Standards
+    """, unsafe_allow_html=True)
     
     st.markdown("""
     ### Historical Haze Episodes
@@ -170,58 +157,46 @@ elif selected_section == "Haze Conditions Overview":
 elif selected_section == "Economic & Social Impacts":
     st.markdown('<h2 class="section-header">💰 Economic & Social Impacts by State</h2>', unsafe_allow_html=True)
     
-    # Sample economic impact data by state
-    states = ['Selangor', 'Kuala Lumpur', 'Johor', 'Perak', 'Negeri Sembilan', 
-              'Melaka', 'Pahang', 'Terengganu', 'Kelantan', 'Penang', 'Kedah', 
-              'Perlis', 'Sabah', 'Sarawak']
+    st.markdown('<h3 class="subsection-header">Documented Economic Impacts</h3>', unsafe_allow_html=True)
     
-    economic_data = {
-        'State': states,
-        'Tourism Losses (RM Million)': np.random.uniform(50, 500, len(states)),
-        'Agriculture Losses (RM Million)': np.random.uniform(30, 400, len(states)),
-        'Healthcare Costs (RM Million)': np.random.uniform(20, 150, len(states)),
-        'Business Disruption (RM Million)': np.random.uniform(40, 300, len(states))
+    # Only show documented impacts from research
+    st.markdown("""
+    ### Agriculture Sector Impact
+    **Research Finding:** For farmers, especially those who depend on sunlight-sensitive crops like rice, fruit and vegetables, even a week of heavy haze can mean smaller harvests. Prolonged exposure to polluted air can damage plant tissues, reduce photosynthesis and disrupt natural habitats.
+    
+    **Source:** Free Malaysia Today, 2025
+    
+    ### Tourism Industry Impact  
+    **Research Finding:** Tourism dips during haze periods as outdoor activities become unsafe and visibility is severely reduced.
+    
+    **Source:** Disaster Readiness, 2025
+    
+    ### Healthcare System Impact
+    **Research Finding:** Exposure to haze can cause respiratory problems, eye irritation, and other health issues, particularly for vulnerable groups like children and the elderly.
+    
+    **Source:** Disaster Readiness, 2025
+    
+    ### Business Operations Impact
+    **Research Finding:** Construction slows, tourism dips, and rising medical leave reduces productivity during haze episodes.
+    
+    **Source:** Free Malaysia Today, 2025
+    """)
+    
+    st.markdown('<h3 class="subsection-header">Documented Health Statistics</h3>', unsafe_allow_html=True)
+    
+    # Only factual health data
+    health_facts = {
+        'Health Metric': ['Particle Size', 'Lung Penetration', 'Vulnerable Groups'],
+        'Finding': ['94% of particles < 2.5μm diameter', 'Bypass normal body defense', 'Children and elderly most affected'],
+        'Source': ['Ramadhan et al., 2017', 'ScienceDirect Study', 'Multiple Studies']
     }
     
-    df_economic = pd.DataFrame(economic_data)
-    df_economic['Total Impact (RM Million)'] = (df_economic['Tourism Losses (RM Million)'] + 
-                                               df_economic['Agriculture Losses (RM Million)'] + 
-                                               df_economic['Healthcare Costs (RM Million)'] + 
-                                               df_economic['Business Disruption (RM Million)'])
+    df_health = pd.DataFrame(health_facts)
+    st.table(df_health)
     
-    # Economic impact visualization
-    fig_economic = px.bar(df_economic.head(10), x='State', y='Total Impact (RM Million)',
-                          title='Total Economic Impact by State (Top 10 Most Affected)')
-    st.plotly_chart(fig_economic, use_container_width=True)
-    
-    # Sector breakdown
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        sector_data = df_economic[['Tourism Losses (RM Million)', 'Agriculture Losses (RM Million)', 
-                                  'Healthcare Costs (RM Million)', 'Business Disruption (RM Million)']].sum()
-        fig_pie = px.pie(values=sector_data.values, names=sector_data.index,
-                         title='Economic Impact by Sector')
-        st.plotly_chart(fig_pie, use_container_width=True)
-    
-    with col2:
-        # Social impact metrics
-        st.markdown('<h3 class="subsection-header">Social Impact Indicators</h3>', unsafe_allow_html=True)
-        
-        social_metrics = {
-            'School Closures': '150+ schools',
-            'Hospital Admissions': '+40% respiratory cases',
-            'Outdoor Event Cancellations': '80% during peak haze',
-            'Construction Work Delays': '60% productivity loss',
-            'Tourism Decline': '25% visitor reduction'
-        }
-        
-        for metric, value in social_metrics.items():
-            st.markdown(f"""
-            <div class="impact-card">
-                <strong>{metric}:</strong> {value}
-            </div>
-            """, unsafe_allow_html=True)
+    st.markdown("""
+    **Academic Source:** Ramadhan et al. (2017). Impact of regional haze towards air quality in Malaysia: A review. ScienceDirect.
+    """, unsafe_allow_html=True)
     
     st.markdown("""
     ### Economic Impact Analysis
@@ -247,26 +222,45 @@ elif selected_section == "Economic & Social Impacts":
 elif selected_section == "Root Causes Analysis":
     st.markdown('<h2 class="section-header">🔍 Root Causes of Haze</h2>', unsafe_allow_html=True)
     
-    # Causes breakdown chart
-    causes_data = {
-        'Cause': ['Palm Oil Plantations', 'Peat Burning', 'Forest Clearing', 'Agricultural Burning', 'El Niño Effects'],
-        'Contribution %': [35, 25, 20, 15, 5],
-        'Location': ['Indonesia (Sumatra)', 'Indonesia (Kalimantan)', 'Regional', 'Regional', 'Climate Factor']
+    # Documented causes from research
+    st.markdown("""
+    ### Primary Causes (Documented in Research)
+    
+    **Agricultural Land Clearing:** Industrial-scale slash-and-burn practices to clear land for agricultural purposes are a major cause of the haze, particularly for palm oil and pulpwood production in the region. Burning land occurs as it is cheaper and faster compared to cutting and clearing using excavators or other machinery.
+    
+    **Source:** Wikipedia - Southeast Asian Haze (2025)
+    
+    **Peatland Fires:** Most haze events have resulted from smoke from fires that occurred on peatlands in Sumatra and the Kalimantan region of Borneo island.
+    
+    **Source:** Wikipedia - Southeast Asian Haze (2025)
+    
+    **Climate Factors:** El Niño - Southern Oscillation (ENSO) influences the intensity of haze episodes.
+    
+    **Source:** ScienceDirect - Impact of regional haze towards air quality in Malaysia (2018)
+    
+    **Local Factors:** The answer often lies within, particularly in areas vulnerable to bushfires and peat soil fires. Sarawak, with its unique geographical diversity, cultural practices, and agricultural methods, presents a complex landscape for fire prevention.
+    
+    **Source:** Sarawak Tribune (2025)
+    """)
+    
+    # Only show documented forest loss data
+    st.markdown('<h3 class="subsection-header">Documented Forest Loss Data</h3>', unsafe_allow_html=True)
+    
+    # This data is from actual research
+    forest_loss_data = {
+        'State': ['Sarawak', 'Sabah', 'Pahang'],
+        'Forest Loss 2001-2023 (Million Hectares)': [3.27, 1.88, 1.27]
     }
     
-    df_causes = pd.DataFrame(causes_data)
+    df_forest_actual = pd.DataFrame(forest_loss_data)
     
-    col1, col2 = st.columns(2)
+    fig_forest_actual = px.bar(df_forest_actual, x='State', y='Forest Loss 2001-2023 (Million Hectares)',
+                              title='Documented Forest Cover Loss by State (2001-2023)')
+    st.plotly_chart(fig_forest_actual, use_container_width=True)
     
-    with col1:
-        fig_causes = px.pie(df_causes, values='Contribution %', names='Cause',
-                           title='Primary Causes of Haze in Southeast Asia')
-        st.plotly_chart(fig_causes, use_container_width=True)
-    
-    with col2:
-        fig_bar_causes = px.bar(df_causes, x='Cause', y='Contribution %', color='Location',
-                               title='Haze Causes by Source Location')
-        st.plotly_chart(fig_bar_causes, use_container_width=True)
+    st.markdown("""
+    **Source:** Greenpeace Malaysia (2025). "Of all tree cover loss between 2001 to 2023 in Malaysia was in Sarawak (3.27Mha) and Sabah (1.88Mha), followed by Pahang (1.27Mha)."
+    """, unsafe_allow_html=True)
     
     st.markdown("""
     ### Primary Causes
@@ -448,18 +442,32 @@ elif selected_section == "Funding & Financial Support":
     
     st.markdown('<h3 class="subsection-header">International Funding Mechanisms</h3>', unsafe_allow_html=True)
     
-    # International funding sources
-    intl_funding = {
-        'Organization': ['Asian Development Bank', 'Green Climate Fund', 'World Bank', 'UN Environment', 'Bilateral Partners'],
-        'Focus Area': ['Infrastructure & Energy', 'Climate Adaptation', 'Sustainable Development', 'Environmental Protection', 'Capacity Building'],
-        'Estimated Funding (USD Million)': [2100, 800, 1200, 400, 600]
-    }
+    st.markdown('<h3 class="subsection-header">Documented International Funding Sources</h3>', unsafe_allow_html=True)
     
-    df_intl = pd.DataFrame(intl_funding)
+    st.markdown("""
+    ### Asian Development Bank (ADB)
+    **Commitment:** ADB aims to deliver over $100 billion in cumulative climate finance from its own resources between 2019 and 2030. As of 2024, ADB has already committed $41.9 billion toward this goal.
     
-    fig_intl = px.treemap(df_intl, path=['Organization'], values='Estimated Funding (USD Million)',
-                         title='International Environmental Funding Sources for Southeast Asia')
-    st.plotly_chart(fig_intl, use_container_width=True)
+    **Source:** Asian Development Bank Official Website (2024)
+    
+    **Regional Financing Gap:** Meeting climate mitigation and adaptation needs in emerging and developing Asia requires investment of at least $1.1 trillion annually. Actual investment falls short by about $800 billion.
+    
+    **Source:** IMF Departmental Papers (2024)
+    
+    ### Southeast Asia Specific Funding
+    **Infrastructure Needs:** Southeast Asia needs an estimated $3.1 trillion, or $210 billion annually, from 2016 to 2030 to support climate-compatible infrastructure, renewable energy, energy efficiency, food security, agriculture, and land use.
+    
+    **Source:** Asian Development Bank Q&A on Southeast Asia Green Recovery (2024)
+    
+    **ACGF Projects:** As of 2022, ADB has financed six ACGF-eligible projects representing $2.1 billion in total project costs, including for energy efficiency, low-carbon transport, and natural resource management.
+    
+    **Source:** Asian Development Bank - Seven Funding Innovations (2025)
+    
+    ### NGO Funding Programs
+    **French Embassy Program:** Requested allocations shall not exceed 6,700 € (approximately 33,600 MYR) for Malaysian NGOs working on marine and coastal ecosystem preservation.
+    
+    **Source:** Embassy of France to Malaysia (2024)
+    """)
     
     st.markdown("""
     ### Funding Details
@@ -483,21 +491,39 @@ elif selected_section == "Environmental Activism":
     
     st.markdown('<h3 class="subsection-header">Major Environmental Organizations</h3>', unsafe_allow_html=True)
     
-    # Activism impact metrics
-    activism_data = {
-        'Organization': ['Greenpeace Malaysia', 'Sahabat Alam Malaysia', 'EcoKnights', 'WWF Malaysia', 'Climate Strike Malaysia'],
-        'Established': [1990, 1977, 2010, 1972, 2019],
-        'Primary Focus': ['Direct Action', 'Environmental Justice', 'Youth Engagement', 'Conservation', 'Climate Advocacy'],
-        'Impact Score': [85, 90, 75, 88, 70]  # Estimated based on reach and achievements
-    }
+    st.markdown('<h3 class="subsection-header">Major Environmental Organizations (Documented)</h3>', unsafe_allow_html=True)
     
-    df_activism = pd.DataFrame(activism_data)
+    # Only documented NGO information
+    st.markdown("""
+    ### Established Organizations with Documented Activities
     
-    fig_activism = px.scatter(df_activism, x='Established', y='Impact Score', 
-                             size='Impact Score', color='Primary Focus',
-                             hover_data=['Organization'],
-                             title='Environmental Organizations: Timeline & Impact')
-    st.plotly_chart(fig_activism, use_container_width=True)
+    **Greenpeace Malaysia**
+    - Focus: Direct action and corporate accountability
+    - Activities: Investigations and documentation of evidence to pinpoint sources of major forest fires and deforestation
+    - Approach: Takes peaceful action to confront decision-makers and hold them accountable to people and the planet
+    
+    **Source:** Greenpeace Malaysia Official Website (2025)
+    
+    **Sahabat Alam Malaysia (Friends of Earth Malaysia)**
+    - Established: Working since 1977
+    - Focus: Environmental justice and community rights
+    - Description: Independent non-profit organisation focusing on environmental issues that impact communities across Malaysia
+    
+    **Source:** Sahabat Alam Malaysia Official Website (2025)
+    
+    **EcoKnights**
+    - Focus: Youth engagement and sustainability education
+    - Recent Campaign: "Racing For A Better Planet" campaign to raise RM100,000
+    - Position: Urges government to take stronger stance on plastic waste reduction
+    
+    **Source:** EcoKnights Official Website (2025)
+    
+    **WWF Malaysia**
+    - Focus: Conservation and wildlife protection
+    - Current Activity: Global Tiger Day 2025 campaigns
+    
+    **Source:** WWF Malaysia Official Website (2025)
+    """)
     
     st.markdown("""
     ### Key Achievements
@@ -517,26 +543,31 @@ elif selected_section == "Environmental Activism":
     **Justice Framing:** The framing by younger activists of climate change as a global justice issue was proving more effective than an environmental message alone.
     """)
     
-    # Activism effectiveness metrics
-    col1, col2 = st.columns(2)
+    st.markdown("""
+    ### Regional Activism Trends (Documented)
     
-    with col1:
-        st.markdown('<h4>Government Perception</h4>')
-        perception_data = ['Supportive', 'Neutral', 'Cautious', 'Resistant']
-        perception_values = [25, 35, 30, 10]
-        
-        fig_perception = px.pie(values=perception_values, names=perception_data,
-                               title='Government Perception of Environmental Activism')
-        st.plotly_chart(fig_perception, use_container_width=True)
+    **Indigenous Rights Integration:** A key aim of the group was to join forces with the nation's indigenous groups, who are already battling big business for their forest lands. It's a "massive oversight" to leave them out of the climate movement.
     
-    with col2:
-        st.markdown('<h4>Public Support Level</h4>')
-        support_data = ['Strong Support', 'Moderate Support', 'Neutral', 'Opposition']
-        support_values = [40, 35, 20, 5]
-        
-        fig_support = px.pie(values=support_values, names=support_data,
-                            title='Public Support for Environmental Activism')
-        st.plotly_chart(fig_support, use_container_width=True)
+    **Source:** The Diplomat - The Young Activists Fighting Southeast Asia's Climate Crisis (2019)
+    
+    **Youth Leadership:** Despite the risks of protesting in parts of the region, young people are leading the call for their governments to act urgently and stop environmental catastrophe.
+    
+    **Source:** The Diplomat (2019)
+    
+    **Effectiveness of Messaging:** The framing by younger activists of climate change as a global justice issue was proving more effective than an environmental message alone.
+    
+    **Source:** The Diplomat (2019)
+    
+    ### NGO-Government Relations
+    
+    **Role Evolution:** In the past, environmental NGOs have a responsibility to advise the government and create awareness to the public. However, the trend has soon changed, where environmental NGOs are becoming more active and influential in enacting policies to uphold environmental integrity.
+    
+    **Source:** ResearchGate - Environmental NGOs Involvement in Dismantling Illegal Plastic Recycling Factory Operations (2020)
+    
+    **Current Function:** Environmental NGOs in Malaysia are a mediator between the government and the public. However, environmental NGOs are now more active in influencing the public to pressure the government to uphold environmental integrity.
+    
+    **Source:** ResearchGate (2020)
+    """)
 
 # Case Studies
 elif selected_section == "Case Studies":
@@ -559,25 +590,27 @@ elif selected_section == "Case Studies":
     **Global Context:** Malaysia is joining a whole host of other countries that really started with China a few years ago, standing up to the United States and other countries and saying no more.
     """)
     
-    # Impact timeline chart
-    timeline_plastic = {
-        'Phase': ['Pre-2018', '2018-2019', '2019-2020', '2020-2025'],
-        'Plastic Imports (tonnes)': [15000, 45000, 25000, 5000],
-        'Illegal Facilities': [5, 40, 20, 8],
-        'Community Complaints': [10, 150, 80, 20]
-    }
+    st.markdown("""
+    ### Documented Impact Timeline
     
-    df_plastic_timeline = pd.DataFrame(timeline_plastic)
+    **Pre-Crisis (Before 2018):** Limited plastic waste imports to Malaysia
     
-    fig_plastic = make_subplots(specs=[[{"secondary_y": True}]])
-    fig_plastic.add_trace(go.Bar(x=df_plastic_timeline['Phase'], 
-                                y=df_plastic_timeline['Plastic Imports (tonnes)'],
-                                name='Plastic Imports'), secondary_y=False)
-    fig_plastic.add_trace(go.Scatter(x=df_plastic_timeline['Phase'], 
-                                    y=df_plastic_timeline['Community Complaints'],
-                                    name='Community Complaints', mode='lines+markers'), secondary_y=True)
-    fig_plastic.update_layout(title='Plastic Waste Crisis Timeline: Imports vs Community Response')
-    st.plotly_chart(fig_plastic, use_container_width=True)
+    **Crisis Period (2018-2019):** Last year, more than 35,000 tons of plastic waste was shipped to Malaysia, which received more discarded plastic from rich nations than any other developing country.
+    
+    **Source:** PBS News Weekend (2025)
+    
+    **Local Impact:** With over 40 illegal plastic factories emitting toxic gases into the air and polluting the local rivers and waterways, they were making people very sick.
+    
+    **Source:** Greenpeace International (2025)
+    
+    **Government Response (2019-2025):** But in June, Malaysian leaders effectively banned future shipments.
+    
+    **Source:** PBS News Weekend (2025)
+    
+    **Current Status:** Malaysia is joining a whole host of other countries that really started with China a few years ago, standing up to the United States and other countries and saying no more.
+    
+    **Source:** PBS News Weekend (2025)
+    """)
     
     st.markdown('<h3 class="subsection-header">NGO Involvement in Policy Enforcement</h3>', unsafe_allow_html=True)
     
@@ -591,28 +624,21 @@ elif selected_section == "Case Studies":
 elif selected_section == "Recent Forest Fires & Climate Change":
     st.markdown('<h2 class="section-header">🔥 Recent Forest Fires & Climate Change Connection</h2>', unsafe_allow_html=True)
     
-    # Forest fire data
-    fire_data = {
-        'State': ['Sarawak', 'Sabah', 'Pahang', 'Johor', 'Perak'],
-        'Forest Loss 2001-2023 (Mha)': [3.27, 1.88, 1.27, 0.8, 0.6],
-        'Recent Fire Incidents 2025': [45, 32, 28, 15, 12],
-        'Carbon Emissions (tonnes CO2)': [850000, 620000, 480000, 300000, 250000]
+    # Only documented forest loss data (from Greenpeace)
+    documented_forest_loss = {
+        'State': ['Sarawak', 'Sabah', 'Pahang'],
+        'Forest Loss 2001-2023 (Million Hectares)': [3.27, 1.88, 1.27]
     }
     
-    df_fires = pd.DataFrame(fire_data)
+    df_documented_fires = pd.DataFrame(documented_forest_loss)
     
-    col1, col2 = st.columns(2)
+    fig_documented_loss = px.bar(df_documented_fires, x='State', y='Forest Loss 2001-2023 (Million Hectares)',
+                                title='Documented Forest Cover Loss by State (2001-2023)')
+    st.plotly_chart(fig_documented_loss, use_container_width=True)
     
-    with col1:
-        fig_loss = px.bar(df_fires, x='State', y='Forest Loss 2001-2023 (Mha)',
-                         title='Forest Cover Loss by State (2001-2023)')
-        st.plotly_chart(fig_loss, use_container_width=True)
-    
-    with col2:
-        fig_fires = px.scatter(df_fires, x='Recent Fire Incidents 2025', y='Carbon Emissions (tonnes CO2)',
-                              size='Forest Loss 2001-2023 (Mha)', color='State',
-                              title='Fire Incidents vs Carbon Emissions (2025)')
-        st.plotly_chart(fig_fires, use_container_width=True)
+    st.markdown("""
+    **Source:** Greenpeace Malaysia (2025). Based on Global Forest Watch data.
+    """, unsafe_allow_html=True)
     
     st.markdown("""
     ### Forest Loss Statistics
