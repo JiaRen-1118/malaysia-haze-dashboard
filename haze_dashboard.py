@@ -659,23 +659,3 @@ st.markdown("""
     <p>Data compiled from government sources, academic research, and NGO reports</p>
 </div>
 """, unsafe_allow_html=True)
-
-# About section
-if st.sidebar.button("About This Dashboard"):
-    st.sidebar.markdown("""
-    **Created:** August 2025
-    
-    **Purpose:** Comprehensive analysis of haze conditions, environmental policies, and NGO activities in Malaysia and Southeast Asia.
-    
-    **Features:**
-    - Real-time style data visualization
-    - Multi-stakeholder perspective
-    - Policy impact analysis
-    - Funding mechanism overview
-    - Environmental activism tracking
-    
-    **Sources:** Academic journals, government reports, NGO publications, recent news articles.
-    """)
-
-# Warning about data
-st.sidebar.warning("⚠️ Note: Some visualizations use simulated data for demonstration. Replace with real-time APIs for production use.")
