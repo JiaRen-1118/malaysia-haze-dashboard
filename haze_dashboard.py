@@ -650,55 +650,15 @@ st.sidebar.markdown("""
 - ASEAN Environmental Reports
 """)
 
-# Footer with deployment instructions
+# Footer
 st.markdown("---")
 st.markdown("""
-### 📋 Deployment Instructions
-
-**To deploy this Streamlit app:**
-
-1. **Save the code** as `haze_dashboard.py`
-
-2. **Install required packages:**
-   ```bash
-   pip install streamlit pandas plotly numpy
-   ```
-
-3. **Run locally:**
-   ```bash
-   streamlit run haze_dashboard.py
-   ```
-
-4. **Deploy to GitHub & Streamlit Cloud:**
-   - Create a new repository on GitHub
-   - Upload `haze_dashboard.py` and create `requirements.txt`:
-     ```
-     streamlit>=1.28.0
-     pandas>=1.5.0
-     plotly>=5.0.0
-     numpy>=1.21.0
-     ```
-   - Connect to Streamlit Cloud (share.streamlit.io)
-   - Deploy directly from your GitHub repository
-
-5. **Alternative deployment options:**
-   - Heroku
-   - AWS/GCP/Azure
-   - Streamlit Community Cloud
-
-### 📊 Data Enhancement Suggestions
-
-For a production version, consider integrating:
-- Real-time API data from Malaysian Department of Environment
-- Live satellite fire detection data
-- Economic impact APIs from relevant ministries
-- Social media sentiment analysis
-- NGO activity tracking systems
-
-### 🔍 Research Methodology
-
-This dashboard compiles information from academic sources, government reports, NGO statements, and recent news articles to provide a comprehensive overview of Malaysia's environmental challenges and responses.
-""")
+<div style='text-align: center; color: #7F8C8D; font-size: 0.9rem; margin-top: 2rem;'>
+    <p><strong>Malaysia Haze & Environmental Impact Dashboard</strong></p>
+    <p>Comprehensive analysis of environmental challenges and policy responses</p>
+    <p>Data compiled from government sources, academic research, and NGO reports</p>
+</div>
+""", unsafe_allow_html=True)
 
 # About section
 if st.sidebar.button("About This Dashboard"):
